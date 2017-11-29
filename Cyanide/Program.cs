@@ -1,85 +1,72 @@
 ﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Reflection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using Newtonsoft.Json;
+using Cyanide.Services;
 
 namespace Cyanide
-{ 
+{
     public class CyanProgram
     {
+        public static void Main(string[] args)
+            => new CyanProgram().StartAsync().GetAwaiter().GetResult();
+
+        private IConfigurationRoot CyanConfig;
         private DiscordSocketClient CyanClient;
         private CommandService CyanCommands;
-        private IServiceProvider CyanServices;
 
-        public static void Main(string[] args)
-            => new CyanProgram().MainAsync().GetAwaiter().GetResult();
-
-        public async Task MainAsync()
+        public async Task StartAsync()
         {
-            CyanClient = new DiscordSocketClient();
-            CyanCommands = new CommandService();
-            CyanServices = new ServiceCollection()
+            var CyanBuilder = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("Configuration.json");
+
+            CyanConfig = CyanBuilder.Build();
+           
+            CyanClient = new DiscordSocketClient(new DiscordSocketConfig
+            {
+                LogLevel = LogSeverity.Verbose,
+                MessageCacheSize = 100
+            });
+ 
+            CyanCommands = new CommandService(new CommandServiceConfig
+            {
+                DefaultRunMode = RunMode.Async,
+                LogLevel = LogSeverity.Verbose
+            });
+
+            var services = new ServiceCollection()
                 .AddSingleton(CyanClient)
                 .AddSingleton(CyanCommands)
-                .BuildServiceProvider();
+                .AddSingleton<CommandHandler>()
+                .AddSingleton<LoggingService>()
+                .AddSingleton<StartupService>()
+                .AddSingleton<Random>()
+                .AddSingleton(CyanConfig);
 
-            CyanClient.Log += CyanLog;
+            var CyanProvider = services.BuildServiceProvider();
 
-            await InstallCommandsAsync();
+            CyanProvider.GetRequiredService<LoggingService>();
+            await CyanProvider.GetRequiredService<StartupService>().StartAsync();
+            CyanProvider.GetRequiredService<CommandHandler>();
 
-            await CyanClient.LoginAsync(TokenType.Bot, CyanConfig.Load().Token);
-            await CyanClient.StartAsync();
             await Task.Delay(-1);
         }
-
-        public async Task InstallCommandsAsync()
-        {
-            CyanClient.MessageReceived += HandleCommandAsync;
-            await CyanCommands.AddModulesAsync(Assembly.GetEntryAssembly());
-        }
-
-        private async Task HandleCommandAsync(SocketMessage messageParam)
-        {
-            var message = messageParam as SocketUserMessage;
-
-            if (message == null)
-                return;
-
-            int argPos = 0;
-
-            if (!(message.HasStringPrefix("Cyan ", ref argPos) || message.HasMentionPrefix(CyanClient.CurrentUser, ref argPos)))
-                return;
-
-            var context = new SocketCommandContext(CyanClient, message);
-
-            var result = await CyanCommands.ExecuteAsync(context, argPos, CyanServices);
-
-            if (!result.IsSuccess)
-                await context.Channel.SendMessageAsync(result.ErrorReason);
-        }
-
-        private Task CyanLog(LogMessage msg)
-        {
-            Console.WriteLine(msg.ToString());
-            return Task.CompletedTask;
-        }
     }
-
+}
+/*
     public class CyanConfig
     {
         public string Token { get; set; }
+        public string OwnerIDs { get; set; }
 
         public CyanConfig()
         {
             Token = "";
+            OwnerIDs = "";
         }
 
         public static CyanConfig Load(string dir = "Configuration.json")
@@ -89,3 +76,4 @@ namespace Cyanide
         }
     }
 }
+*/
