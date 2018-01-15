@@ -14,44 +14,44 @@ namespace Cyanide
         public static void Main(string[] args)
             => new CyanProgram().StartAsync().GetAwaiter().GetResult();
 
-        private IConfigurationRoot CyanConfig;
-        private DiscordSocketClient CyanClient;
-        private CommandService CyanCommands;
+        private IConfigurationRoot cyanConfig;
+        private DiscordSocketClient cyanClient;
+        private CommandService cyanCommands;
 
         public async Task StartAsync()
         {
-            var CyanBuilder = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
+            var cyanBuilder = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory + @"/Config")
                 .AddJsonFile("Configuration.json");
 
-            CyanConfig = CyanBuilder.Build();
+            cyanConfig = cyanBuilder.Build();
            
-            CyanClient = new DiscordSocketClient(new DiscordSocketConfig
+            cyanClient = new DiscordSocketClient(new DiscordSocketConfig
             {
                 LogLevel = LogSeverity.Verbose,
                 MessageCacheSize = 100
             });
  
-            CyanCommands = new CommandService(new CommandServiceConfig
+            cyanCommands = new CommandService(new CommandServiceConfig
             {
                 DefaultRunMode = RunMode.Async,
                 LogLevel = LogSeverity.Verbose
             });
 
-            var services = new ServiceCollection()
-                .AddSingleton(CyanClient)
-                .AddSingleton(CyanCommands)
+            var cyanServices = new ServiceCollection()
+                .AddSingleton(cyanClient)
+                .AddSingleton(cyanCommands)
                 .AddSingleton<CommandHandler>()
                 .AddSingleton<LoggingService>()
                 .AddSingleton<StartupService>()
                 .AddSingleton<Random>()
-                .AddSingleton(CyanConfig);
+                .AddSingleton(cyanConfig);
 
-            var CyanProvider = services.BuildServiceProvider();
+            var cyanProvider = cyanServices.BuildServiceProvider();
 
-            CyanProvider.GetRequiredService<LoggingService>();
-            await CyanProvider.GetRequiredService<StartupService>().StartAsync();
-            CyanProvider.GetRequiredService<CommandHandler>();
+            cyanProvider.GetRequiredService<LoggingService>();
+            await cyanProvider.GetRequiredService<StartupService>().StartAsync();
+            cyanProvider.GetRequiredService<CommandHandler>();
 
             await Task.Delay(-1);
         }

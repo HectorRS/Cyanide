@@ -10,29 +10,29 @@ namespace Cyanide.Services
 {
     public class StartupService
     {
-        private readonly DiscordSocketClient CyanClient;
-        private readonly CommandService CyanCommands;
-        private readonly IConfigurationRoot CyanConfig;
+        private readonly DiscordSocketClient cyanClient;
+        private readonly CommandService cyanCommands;
+        private readonly IConfigurationRoot cyanConfig;
 
         public StartupService(  DiscordSocketClient discord,
                                 CommandService commands,
                                 IConfigurationRoot config   )
         {
-            CyanConfig = config;
-            CyanClient = discord;
-            CyanCommands = commands;
+            cyanConfig = config;
+            cyanClient = discord;
+            cyanCommands = commands;
         }
 
         public async Task StartAsync()
         {
-            string Token = CyanConfig["tokens:discord"];
+            string Token = cyanConfig["tokens:discord"];
             if (string.IsNullOrWhiteSpace(Token))
                 throw new Exception("Token missing.");
 
-            await CyanClient.LoginAsync(TokenType.Bot, Token);
-            await CyanClient.StartAsync();
+            await cyanClient.LoginAsync(TokenType.Bot, Token);
+            await cyanClient.StartAsync();
 
-            await CyanCommands.AddModulesAsync(Assembly.GetEntryAssembly());
+            await cyanCommands.AddModulesAsync(Assembly.GetEntryAssembly());
         }
     }
 }

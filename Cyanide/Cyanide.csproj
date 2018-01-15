@@ -6,20 +6,41 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Modules\Administration\**" />
+    <EmbeddedResource Remove="Modules\Administration\**" />
+    <None Remove="Modules\Administration\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Modules\Translator\input.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Discord.Net" Version="1.0.2" />
+    <PackageReference Include="Google.Apis" Version="1.32.0" />
+    <PackageReference Include="Google.Apis.Core" Version="1.32.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.1-beta3" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Modules\Administration\" />
+    <Reference Include="SauceNaoSharp">
+      <HintPath>Modules\dll\SauceNaoSharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Configuration.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Configuration_Example.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Configuration.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Config\Configuration.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

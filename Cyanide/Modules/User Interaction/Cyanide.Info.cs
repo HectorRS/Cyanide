@@ -8,8 +8,25 @@ using Discord.Commands;
 
 namespace Cyanide.Modules.User_Interaction
 {
-    [Group("info")]
     public class CyanInfo : ModuleBase<SocketCommandContext>
+    {
+        [Command("help")]
+        [Summary("Gives a list of commands.")]
+        public async Task HelpAsync()
+        {
+            await ReplyAsync("Too bad, the guy's too lazy to even give me the help module. It's not like I have dozens of commands or something, so go help yourself.");
+        }
+
+        [Command("echo")]
+        [Summary("Echoes.")]
+        public async Task EchoAsync([Remainder] string echo)
+        {
+            await ReplyAsync(echo);
+        }
+    }
+
+        [Group("info")]
+    public class CyanInfoGroup : ModuleBase<SocketCommandContext>
     {
         [Command("owner")]
         [Summary("Gives bot owner's discord tag.")]
