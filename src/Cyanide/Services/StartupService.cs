@@ -6,7 +6,7 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
-namespace Cyanide.Services
+namespace Cyanide
 {
     public class StartupService
     {
@@ -14,8 +14,8 @@ namespace Cyanide.Services
         private readonly CommandService cyanCommands;
         private readonly IConfigurationRoot cyanConfig;
 
-        public StartupService(  DiscordSocketClient discord,
-                                CommandService commands,
+        public StartupService(  DiscordSocketClient discord ,
+                                CommandService commands     ,
                                 IConfigurationRoot config   )
         {
             cyanConfig = config;
@@ -25,11 +25,7 @@ namespace Cyanide.Services
 
         public async Task StartAsync()
         {
-            string Token = cyanConfig["tokens:discord"];
-            if (string.IsNullOrWhiteSpace(Token))
-                throw new Exception("Token missing.");
-
-            await cyanClient.LoginAsync(TokenType.Bot, Token);
+            await cyanClient.LoginAsync(TokenType.Bot, cyanConfig["tokens:discord"]);
             await cyanClient.StartAsync();
 
             await cyanCommands.AddModulesAsync(Assembly.GetEntryAssembly());

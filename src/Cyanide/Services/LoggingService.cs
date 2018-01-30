@@ -5,40 +5,40 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
-namespace Cyanide.Services
+namespace Cyanide
 {
     public class LoggingService
     {
-        private readonly DiscordSocketClient CyanClient;
-        private readonly CommandService CyanCommands;
+        private readonly DiscordSocketClient cyanClient;
+        private readonly CommandService cyanCommands;
 
         private string CyanLogDirectory { get; }
         private string CyanLogFile => Path.Combine(CyanLogDirectory, $"{DateTime.UtcNow.ToString("yyyy-MM-dd")}.txt");
 
-        public LoggingService(  DiscordSocketClient discord,
-                                CommandService commands       )
+        public LoggingService(DiscordSocketClient discord, CommandService commands)
         {
             CyanLogDirectory = Path.Combine(AppContext.BaseDirectory, "Logs" );
 
-            CyanClient = discord;
-            CyanCommands = commands;
+            cyanClient = discord;
+            cyanCommands = commands;
 
-            CyanClient.Log += CyanLog;
-            CyanCommands.Log += CyanLog;
+            cyanClient.Log += OnLogAsync;
+            cyanCommands.Log += OnLogAsync;
         }
 
-        private Task CyanLog(LogMessage Message)
+        public Task LogAsync(object severity, string source, string message)
         {
             if (!Directory.Exists(CyanLogDirectory))
                 Directory.CreateDirectory(CyanLogDirectory);
-
             if (!File.Exists(CyanLogFile))
                 File.Create(CyanLogFile).Dispose();
 
-            string logText = $"{DateTime.UtcNow.ToString("hh:mm:ss")} [{Message.Severity}] {Message.Source}: {Message.Exception?.ToString() ?? Message.Message}";
+            string logText = $"{DateTime.UtcNow.ToString("hh:mm:ss")} [{severity}] {source}: {message}";
             File.AppendAllText(CyanLogFile, logText + "\n");
 
             return Console.Out.WriteLineAsync(logText);
         }
+        private Task OnLogAsync(LogMessage msg)
+            => LogAsync(msg.Severity, msg.Source, msg.Exception?.ToString() ?? msg.Message);
     }
 }

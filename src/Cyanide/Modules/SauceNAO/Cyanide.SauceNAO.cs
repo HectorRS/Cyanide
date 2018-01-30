@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
@@ -7,21 +6,25 @@ using Discord;
 using Discord.Commands;
 using SauceNaoSharp;
 
-namespace Cyanide.Modules.Media
+namespace Cyanide.Modules
 {
-    public class CyanSauceNAO : ModuleBase<SocketCommandContext>
+    [Name("SauceNAO")]
+    [Summary("Reverse image search module.")]
+    public class CyanSauceNAO : CyanModuleBase
     {
-        private readonly IConfigurationRoot CyanConfig;
+        private readonly IConfigurationRoot cyanConfig;
 
         public CyanSauceNAO(IConfigurationRoot config)
         {
-            CyanConfig = config;
+            cyanConfig = config;
         }
 
         [Command("saucenao")]
+        [Summary("Find the source of the last image attachment/embed posted within the same channel")]
         public async Task SauceNaoAsync()
         {
             var messages = await Context.Channel.GetMessagesAsync(100).Flatten();
+
             string url = "";
             foreach (var attach in messages)
             {
@@ -48,7 +51,7 @@ namespace Cyanide.Modules.Media
                 return;
             }
 
-            string Token = CyanConfig["tokens:SauceNAO"];
+            string Token = cyanConfig["tokens:SauceNAO"];
             if (string.IsNullOrWhiteSpace(Token))
                 throw new Exception("SauceNAO API key missing.");
 
@@ -61,8 +64,8 @@ namespace Cyanide.Modules.Media
             
             foreach (var results in response.Results)
             {
-                await ReplyAsync(   results.ResultData.Title + "\n" +
-                                    results.ResultData.Urls[0]      );
+                await ReplyAsync( results.ResultData.Title + "\n"
+                                + results.ResultData.Urls[0]    );
             }
         }
     }
