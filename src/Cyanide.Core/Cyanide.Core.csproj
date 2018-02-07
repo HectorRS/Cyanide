@@ -6,7 +6,7 @@
     <ApplicationIcon />
     <StartupObject />
     <RootNamespace>Cyanide</RootNamespace>
-    <Version>0.9.2-unstable</Version>
+    <Version>0.9.3</Version>
     <PackageId>CNDCORE</PackageId>
     <Authors>HectorRS; Lemonical</Authors>
     <Company>MX45</Company>

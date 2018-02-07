@@ -27,12 +27,18 @@ namespace Cyanide
         {
             builder.Entity<GuildConfig>()
                 .HasKey(x => x.Id);
+
             builder.Entity<GuildConfig>()
                 .Property(x => x.Id)
                 .ValueGeneratedOnAdd()
                 .IsRequired();
+
             builder.Entity<GuildConfig>()
                 .Property(x => x.GuildId)
+                .IsRequired();
+
+            builder.Entity<GuildConfig>()
+                .Property(x => x.UserIOLogChannelId)
                 .IsRequired();
         }
     }

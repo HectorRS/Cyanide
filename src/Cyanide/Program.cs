@@ -24,7 +24,7 @@ namespace Cyanide
                 .SetBasePath(AppContext.BaseDirectory + @"/Config")
                 .AddJsonFile("Configuration.json");
             cyanConfig = cyanBuilder.Build();
-           
+
             var cyanServices = new ServiceCollection()
                 .AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
                 {

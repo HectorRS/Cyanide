@@ -31,6 +31,8 @@ namespace Cyanide
             cyanConfig = config;
 
             cyanClient.MessageReceived += OnMessageReceivedAsync;
+            cyanClient.UserJoined += OnUserJoinedAsync;
+            cyanClient.UserLeft += OnUserLeftAsync;
         }
 
         private async Task OnMessageReceivedAsync(SocketMessage MsgParam)
@@ -78,51 +80,27 @@ namespace Cyanide
                     break;
             }
         }
+
+        public async Task OnUserJoinedAsync(SocketGuildUser user)
+        {
+            ulong channelId = await cyanManager.GetUserIOChannelIdAsync(user.Guild.Id);
+            if (channelId != 0)
+            {
+                var channel = cyanClient.GetChannel(channelId) as SocketTextChannel;
+                await channel.SendMessageAsync($"User **{user.Username}#{user.Discriminator}** has joined the server.");
+            }
+            else return;
+        }
+
+        public async Task OnUserLeftAsync(SocketGuildUser user)
+        {
+            ulong channelId = await cyanManager.GetUserIOChannelIdAsync(user.Guild.Id);
+            if (channelId != 0)
+            {
+                var channel = cyanClient.GetChannel(channelId) as SocketTextChannel;
+                await channel.SendMessageAsync($"User **{user.Username}#{user.Discriminator}** has left the server.");
+            }
+            else return;
+        }
     }
 }
-
-    /*public class CommandHandler
-    {
-        private readonly DiscordSocketClient cyanClient;
-        private readonly CommandService cyanCommands;
-        private readonly LoggingService cyanLogger;
-        private readonly IServiceProvider cyanServices;
-
-        public CommandHandler
-            (
-            DiscordSocketClient discord,
-            CommandService commands,
-            LoggingService logger,
-            IServiceProvider provider
-            )
-        {
-            cyanClient = discord;
-            cyanCommands = commands;
-            CyanConfig = config;
-            cyanServices = provider;
-
-            cyanClient.MessageReceived += HandleCommandAsync;
-        }
-
-        private async Task HandleCommandAsync(SocketMessage MsgParam)
-        {
-            var message = MsgParam as SocketUserMessage;
-
-            if (message == null)
-                return;
-
-            if (message.Author.Id == cyanClient.CurrentUser.Id)
-                return;
-
-            var context = new SocketCommandContext(cyanClient, message);
-
-            int argPos = 0;
-            if (message.HasStringPrefix(CyanConfig["prefix"], ref argPos))
-            {
-                var result = await cyanCommands.ExecuteAsync(context, argPos, cyanServices);
-
-                if (!result.IsSuccess)
-                    await context.Channel.SendMessageAsync(result.ToString());
-            }
-        }
-    }*/

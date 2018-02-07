@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Discord;
@@ -29,6 +28,7 @@ namespace Cyanide
             await cyanClient.StartAsync();
 
             await cyanCommands.AddModulesAsync(Assembly.GetEntryAssembly());
+            await cyanClient.SetGameAsync(cyanConfig["game"]);
         }
     }
 }

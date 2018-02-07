@@ -1,25 +1,50 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
+using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Cyanide.Modules
 {
-    [Name("Info")]
-    [Group("Info")]
-    [Summary("Gives info.")]
+    [Name("Info"), Group("Info")]
+    [Summary("Gets info about Cyanide.")]
     public class CyanGeneralInfo : CyanModuleBase
     {
-        [Command("owner")]
-        [Summary("Gives bot owner's discord tag.")]
-        public async Task OwnerInfoAsync()
+        [Command]
+        public async Task InfoAsync()
         {
-            await ReplyAsync("My owner/useless developer is Scarlett Azure#9098." + "\n" + "Careful where you tread around him, 'cause he's always depressed and will not hesitate to hang himself.");
+            var cyanide = await Context.Client.GetApplicationInfoAsync();
+            
+            var builder = new EmbedBuilder()
+                .WithColor(0,255,255)
+                .WithAuthor(x =>
+                {
+                    x.Name = cyanide.Name.ToString();
+                    x.IconUrl = cyanide.IconUrl;
+                    x.Url = "https://discord.gg/eddtepc";
+                })
+                .WithDescription("Developed by HectorRS and Lemonical")
+                .AddInlineField("Memory", GetMemoryUsage())
+                .AddInlineField("Latency", GetLatency())
+                .AddInlineField("Uptime", GetUptime())
+                .WithFooter(GetCyanVersion() + ", " + GetLibrary());
+            
+            await ReplyAsync(builder);
         }
 
-        [Command("bot")]
-        [Summary("Gives Cyanide's info.")]
-        public async Task BotInfoAsync()
+        public string GetUptime()
         {
-            await ReplyAsync("I'm Cyanide, a small-scale private bot designed to automate what my owner's too lazy to do.");
+            var uptime = (DateTime.Now - Process.GetCurrentProcess().StartTime);
+            return $"{uptime.Days}d {uptime.Hours}h {uptime.Minutes}m {uptime.Seconds}s";
         }
+
+        public string GetLibrary()
+            => $"Discord.Net v{DiscordConfig.Version}";
+        public string GetCyanVersion()
+            => $"Cyanide v{AppHelper.Version}";
+        public string GetMemoryUsage()
+            => $"{Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2)}mb";
+        public string GetLatency()
+            => $"{Context.Client.Latency}ms";
     }
 }
