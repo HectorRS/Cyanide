@@ -16,7 +16,7 @@ namespace Cyanide.Modules
     {
         [Command("all")]
         [Summary("Purges all recent messages")]
-        public async Task AllAsync(int history = 30)
+        public async Task PurgeAllAsync(int history = 30)
         {
             var messages = await GetMessageAsync(history + 1);
             await DeleteMessagesAsync(messages);
@@ -24,7 +24,7 @@ namespace Cyanide.Modules
 
         [Command("user")]
         [Summary("Purges all recent messages from the specified user")]
-        public async Task UserAsync(SocketUser user, int history = 30)
+        public async Task PurgeUserAsync(SocketUser user, int history = 30)
         {
             var cmdmsg = await GetCmdMsgAsync();
             var messages = (await GetMessageAsync(history)).Where(x => x.Author.Id == user.Id);
@@ -34,7 +34,7 @@ namespace Cyanide.Modules
 
         [Command("bots")]
         [Summary("Purges all recent messages made by bots")]
-        public async Task BotsAsync(int history = 30)
+        public async Task PurgeBotAsync(int history = 30)
         {
             var cmdmsg = await GetCmdMsgAsync();
             var messages = (await GetMessageAsync(history)).Where(x => x.Author.IsBot);
@@ -44,7 +44,7 @@ namespace Cyanide.Modules
 
         [Command("filter")]
         [Summary("Purges all recent messages that contain a certain phrase")]
-        public async Task FilterAsync(string text, int history = 30)
+        public async Task PurgeFilterAsync(string text, int history = 30)
         {
             var cmdmsg = await GetCmdMsgAsync();
             var messages = (await GetMessageAsync(history)).Where(x => x.Content.ToLower().Contains(text.ToLower()));
@@ -54,7 +54,7 @@ namespace Cyanide.Modules
 
         [Command("attachments")]
         [Summary("Purges all recent messages with attachments")]
-        public async Task AttachmentsAsync(int history = 30)
+        public async Task PurgeAttachmentsAsync(int history = 30)
         {
             var cmdmsg = await GetCmdMsgAsync();
             var messages = (await GetMessageAsync(history)).Where(x => x.Attachments.Count() != 0);

@@ -15,12 +15,20 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningsAsErrors>NU1605</WarningsAsErrors>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="Modules\Administration\**" />
+    <Compile Remove="Modules\Timezone.hold\**" />
     <EmbeddedResource Remove="Modules\Administration\**" />
+    <EmbeddedResource Remove="Modules\Timezone.hold\**" />
     <None Remove="Modules\Administration\**" />
+    <None Remove="Modules\Timezone.hold\**" />
   </ItemGroup>
 
   <ItemGroup>

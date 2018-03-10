@@ -38,6 +38,9 @@ namespace Cyanide
                 .IsRequired();
 
             builder.Entity<GuildConfig>()
+                .Property(x => x.Prefix);
+
+            builder.Entity<GuildConfig>()
                 .Property(x => x.UserIOLogChannelId)
                 .IsRequired();
         }

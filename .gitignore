@@ -8,6 +8,7 @@
 *.sln.docstates
 [Cc]onfiguration.json
 *.dgml
+*.hold
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

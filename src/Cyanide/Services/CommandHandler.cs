@@ -31,8 +31,6 @@ namespace Cyanide
             cyanConfig = config;
 
             cyanClient.MessageReceived += OnMessageReceivedAsync;
-            cyanClient.UserJoined += OnUserJoinedAsync;
-            cyanClient.UserLeft += OnUserLeftAsync;
         }
 
         private async Task OnMessageReceivedAsync(SocketMessage MsgParam)
@@ -47,10 +45,14 @@ namespace Cyanide
             int argPos = 0;
             bool hasStringPrefix = prefix == null ? false : msg.HasStringPrefix(prefix, ref argPos);
 
-            if  (  hasStringPrefix
-                || msg.HasStringPrefix(cyanConfig["globalprefix"], ref argPos))
-                using (context.Channel.EnterTypingState())
-                    await ExecuteAsync(context, cyanProvider, argPos);
+            if  (hasStringPrefix || msg.HasStringPrefix(cyanConfig["globalprefix"], ref argPos))
+            {
+                var typingState = context.Channel.EnterTypingState();
+                await ExecuteAsync(context, cyanProvider, argPos);
+                typingState.Dispose();
+                GC.Collect();
+            }
+                
         }
 
         public async Task ExecuteAsync(CyanCommandContext context, IServiceProvider provider, int argPos)
@@ -79,28 +81,6 @@ namespace Cyanide
                     await context.Channel.SendMessageAsync(result.ErrorReason);
                     break;
             }
-        }
-
-        public async Task OnUserJoinedAsync(SocketGuildUser user)
-        {
-            ulong channelId = await cyanManager.GetUserIOChannelIdAsync(user.Guild.Id);
-            if (channelId != 0)
-            {
-                var channel = cyanClient.GetChannel(channelId) as SocketTextChannel;
-                await channel.SendMessageAsync($"User **{user.Username}#{user.Discriminator}** has joined the server.");
-            }
-            else return;
-        }
-
-        public async Task OnUserLeftAsync(SocketGuildUser user)
-        {
-            ulong channelId = await cyanManager.GetUserIOChannelIdAsync(user.Guild.Id);
-            if (channelId != 0)
-            {
-                var channel = cyanClient.GetChannel(channelId) as SocketTextChannel;
-                await channel.SendMessageAsync($"User **{user.Username}#{user.Discriminator}** has left the server.");
-            }
-            else return;
         }
     }
 }

@@ -26,19 +26,27 @@ namespace Cyanide
             cyanCommands.Log += OnLogAsync;
         }
 
-        public Task LogAsync(object severity, string source, string message)
-        {
-            if (!Directory.Exists(CyanLogDirectory))
-                Directory.CreateDirectory(CyanLogDirectory);
-            if (!File.Exists(CyanLogFile))
-                File.Create(CyanLogFile).Dispose();
-
-            string logText = $"{DateTime.UtcNow.ToString("hh:mm:ss")} [{severity}] {source}: {message}";
-            File.AppendAllText(CyanLogFile, logText + "\n");
-
-            return Console.Out.WriteLineAsync(logText);
-        }
         private Task OnLogAsync(LogMessage msg)
             => LogAsync(msg.Severity, msg.Source, msg.Exception?.ToString() ?? msg.Message);
+
+        public Task LogAsync(object severity, string source, string message)
+        {
+            try
+            {
+                if (!Directory.Exists(CyanLogDirectory))
+                    Directory.CreateDirectory(CyanLogDirectory);
+                if (!File.Exists(CyanLogFile))
+                    File.Create(CyanLogFile).Dispose();
+            
+                string logText = $"{DateTime.UtcNow.ToString("hh:mm:ss")} [{severity}] {source}: {message}";
+                File.AppendAllText(CyanLogFile, logText + "\n");
+                return Console.Out.WriteLineAsync(logText);
+            }
+            catch (Exception ex)
+            {
+                return Console.Out.WriteLineAsync(ex.Source);
+            }
+        }
+        
     }
 }

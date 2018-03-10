@@ -17,8 +17,8 @@ namespace Cyanide
 
         public async Task StartAsync()
         {
-            ConsoleCyanifier.NewLine($"Cyanide v.{AppHelper.Version}");
-            ConsoleCyanifier.NewLine();
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine($"Cyanide v.{AppHelper.Version}");
 
             var cyanBuilder = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory + @"/Config")
@@ -38,9 +38,10 @@ namespace Cyanide
                 }))
                 .AddDbContext<ConfigDatabase>(ServiceLifetime.Transient)
                 .AddTransient<ConfigManager>()
-                .AddSingleton<CommandHandler>()
                 .AddSingleton<LoggingService>()
                 .AddSingleton<StartupService>()
+                .AddSingleton<CommandHandler>()
+                .AddSingleton<EventHandler>()
                 .AddSingleton<Random>()
                 .AddSingleton(cyanConfig);
 
@@ -50,6 +51,7 @@ namespace Cyanide
             await cyanProvider.GetRequiredService<StartupService>().StartAsync();
 
             cyanProvider.GetRequiredService<CommandHandler>();
+            cyanProvider.GetRequiredService<EventHandler>();
 
             await Task.Delay(-1);
         }

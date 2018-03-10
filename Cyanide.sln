@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2020
+VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cyanide", "src\Cyanide\Cyanide.csproj", "{C10C05F2-04B8-4112-A523-F0215318E088}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cyanide.Core", "src\Cyanide.Core\Cyanide.Core.csproj", "{F98C6FF5-C31F-473C-A9EB-03D93E0379C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cyanide.Core", "src\Cyanide.Core\Cyanide.Core.csproj", "{F98C6FF5-C31F-473C-A9EB-03D93E0379C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

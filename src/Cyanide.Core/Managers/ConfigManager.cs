@@ -41,8 +41,7 @@ namespace Cyanide
             else
                 config.Prefix = prefix;
 
-            _db.GuildConfigs.Update(config);
-            await _db.SaveChangesAsync();
+            await UpdateAsync(config);
         }
 
         public async Task<ulong> GetUserIOChannelIdAsync(ulong guildId)
@@ -51,20 +50,27 @@ namespace Cyanide
         public async Task SetUserIOChannelIdAsync(ulong guildId, ulong userIOLogChannelId)
         {
             var config = await GetConfigAsync(guildId);
-            await SetUserIOLogChannelIdAsync(config, userIOLogChannelId);
+            await SetUserIOChannelIdAsync(config, userIOLogChannelId);
         }
 
-        public async Task SetUserIOLogChannelIdAsync(GuildConfig config, ulong userIOLogChannelId)
+        public async Task SetUserIOChannelIdAsync(GuildConfig config, ulong userIOLogChannelId)
         {
             config.UserIOLogChannelId = userIOLogChannelId;
             _db.GuildConfigs.Update(config);
             await _db.SaveChangesAsync();
         }
 
-        // Create
+        // Creates
         public async Task CreateAsync(GuildConfig guildConfig)
         {
             await _db.GuildConfigs.AddAsync(guildConfig);
+            await _db.SaveChangesAsync();
+        }
+
+        //Updates
+        public async Task UpdateAsync(GuildConfig guildConfig)
+        {
+            _db.GuildConfigs.Update(guildConfig);
             await _db.SaveChangesAsync();
         }
     }

@@ -57,7 +57,7 @@ namespace Cyanide.Modules
                         break;
                     }
                 }
-
+                
                 if (!success)
                     continue;
 
@@ -90,7 +90,7 @@ namespace Cyanide.Modules
             }
 
             var builder = new EmbedBuilder()
-                .WithFooter(x => x.Text = $"Type `{prefix}help <command>` for more information")
+                .WithFooter(x => x.Text = $"Type `{prefix}help <module> <command>` for more information")
                 .WithColor(0, 255, 255);
 
             foreach (var command in commands)

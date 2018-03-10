@@ -57,7 +57,7 @@ namespace Cyanide.Modules
         public async Task SetUserIOLogChannelIdAsync([Remainder]ulong userIOLogChannelId)
         {
             var config = await cyanManager.GetOrCreateConfigAsync(Context.Guild.Id);
-            await cyanManager.SetUserIOLogChannelIdAsync(config, userIOLogChannelId);
+            await cyanManager.SetUserIOChannelIdAsync(config, userIOLogChannelId);
 
             await ReplyAsync($"This server's log channel ID is now `{userIOLogChannelId}`");
         }
