@@ -9,7 +9,6 @@
 [Cc]onfiguration.json
 *.dgml
 *.hold
-PublishProfiles
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
