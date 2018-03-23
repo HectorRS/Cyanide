@@ -47,7 +47,7 @@ namespace Cyanide.Modules
 
             if (url == null)
             {
-                await ReplyAsync("No link found.");
+                await ReplyAsync("No link found. (null result)");
                 return;
             }
 
@@ -64,8 +64,28 @@ namespace Cyanide.Modules
             
             foreach (var results in response.Results)
             {
-                await ReplyAsync( results.ResultData.Title + "\n"
-                                + results.ResultData.Urls[0]    );
+                if (double.Parse(results.ResultInfo.Similarity) < 50.00)
+                {
+                    await ReplyAsync("No link found. (similarity < 50)");
+                }
+
+                if (double.Parse(results.ResultInfo.Similarity) >= 50.00)
+                {
+                    if (url.Contains("pixiv"))
+                    {
+                        await ReplyAsync(
+                        "Result found:\n" +
+                        "Pixiv: \"" + results.ResultData.Title + "\", by: " + results.ResultData.PixivMemberName + "\n" +
+                        results.ResultData.Urls[0]);
+                    }
+                    else await ReplyAsync(
+                        "Result found:\n" + "```" +
+                        "Similarity: "  + results.ResultInfo.Similarity     + "\n" +
+                        "Title: "       + results.ResultData.Title          + "\n" +
+                        "Creator: "     + results.ResultData.ImageCreator   + "\n" +
+                        "Source: "      + results.ResultData.ImageSource    + "\n" +
+                        "Urls: "        + results.ResultData.Urls[0]        + "```" );
+                }
             }
         }
     }
