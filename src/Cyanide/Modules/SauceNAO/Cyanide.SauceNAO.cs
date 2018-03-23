@@ -64,14 +64,10 @@ namespace Cyanide.Modules
             
             foreach (var results in response.Results)
             {
-                if (double.Parse(results.ResultInfo.Similarity) < 50.00)
-                {
-                    await ReplyAsync("No link found. (similarity < 50)");
-                }
-
                 if (double.Parse(results.ResultInfo.Similarity) >= 50.00)
                 {
-                    if (url.Contains("pixiv"))
+                    if (    !string.IsNullOrWhiteSpace(results.ResultData.PixivId.ToString())
+                        &&  !string.IsNullOrWhiteSpace(results.ResultData.PixivMemberName))
                     {
                         await ReplyAsync(
                         "Result found:\n" +
@@ -79,13 +75,14 @@ namespace Cyanide.Modules
                         results.ResultData.Urls[0]);
                     }
                     else await ReplyAsync(
-                        "Result found:\n" + "```" +
-                        "Similarity: "  + results.ResultInfo.Similarity     + "\n" +
-                        "Title: "       + results.ResultData.Title          + "\n" +
-                        "Creator: "     + results.ResultData.ImageCreator   + "\n" +
-                        "Source: "      + results.ResultData.ImageSource    + "\n" +
-                        "Urls: "        + results.ResultData.Urls[0]        + "```" );
+                        "Result found:\n" + "```prolog\n" +
+                        "Similarity: '" + results.ResultInfo.Similarity     + "%'\n" +
+                        "Title: '"      + results.ResultData.Title          + "'\n" +
+                        "Creator: '"    + results.ResultData.ImageCreator   + "'\n" +
+                        "Source: '"     + results.ResultData.ImageSource    + "'\n" +
+                        "Url: ['"       + results.ResultData.Urls[0]        + "']```" );
                 }
+                else await ReplyAsync("No link found. (similarity < 50)");
             }
         }
     }
