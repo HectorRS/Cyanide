@@ -64,7 +64,7 @@ namespace Cyanide.Modules
                 builder.AddField(module.Name, module.Summary);
             }
 
-            await ReplyAsync(builder);
+            await ReplyDMAsync(builder);
         }
 
         [Command]

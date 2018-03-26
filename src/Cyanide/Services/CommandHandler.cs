@@ -10,25 +10,25 @@ namespace Cyanide
     public class CommandHandler
     {
         private readonly DiscordSocketClient cyanClient;
-        private readonly CommandService cyanCommands;
-        private readonly LoggingService cyanLogger;
-        private readonly ConfigManager cyanManager;
-        private readonly IServiceProvider cyanProvider;
-        private readonly IConfigurationRoot cyanConfig;
+        private readonly CommandService      cyanCommands;
+        private readonly LoggingService      cyanLogger;
+        private readonly ConfigManager       cyanManager;
+        private readonly IServiceProvider    cyanProvider;
+        private readonly IConfigurationRoot  cyanConfig;
 
-        public CommandHandler(  DiscordSocketClient discord ,
-                                CommandService commands     ,
-                                LoggingService logger       ,
-                                ConfigManager manager       ,
-                                IServiceProvider provider   ,
-                                IConfigurationRoot config   )
+        public CommandHandler(DiscordSocketClient discord,
+                              CommandService      commands,
+                              LoggingService      logger,
+                              ConfigManager       manager,
+                              IServiceProvider    provider,
+                              IConfigurationRoot  config)
         {
-            cyanClient = discord;
+            cyanClient   = discord;
             cyanCommands = commands;
-            cyanLogger = logger;
-            cyanManager = manager;
+            cyanLogger   = logger;
+            cyanManager  = manager;
             cyanProvider = provider;
-            cyanConfig = config;
+            cyanConfig   = config;
 
             cyanClient.MessageReceived += OnMessageReceivedAsync;
         }
@@ -47,12 +47,10 @@ namespace Cyanide
 
             if  (hasStringPrefix || msg.HasStringPrefix(cyanConfig["globalprefix"], ref argPos))
             {
-                var typingState = context.Channel.EnterTypingState();
+                var ts = context.Channel.EnterTypingState();
                 await ExecuteAsync(context, cyanProvider, argPos);
-                typingState.Dispose();
-                GC.Collect();
-            }
-                
+                ts.Dispose();
+            } 
         }
 
         public async Task ExecuteAsync(CyanCommandContext context, IServiceProvider provider, int argPos)

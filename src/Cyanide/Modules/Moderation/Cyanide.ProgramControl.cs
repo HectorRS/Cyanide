@@ -22,9 +22,9 @@ namespace Cyanide.Modules
             };
 
             await ReplyAsync("Restarting...");
-            
+
             Console.WriteLine("Restart command detected. Restarting...");
-           
+
             await Context.Client.StopAsync();
             await Context.Client.LogoutAsync();
 
@@ -43,6 +43,14 @@ namespace Cyanide.Modules
             await Context.Client.StopAsync();
             await Context.Client.LogoutAsync();
             Environment.Exit(0);
+        }
+
+        [Command("cleanup"), Alias("clean")]
+        [Summary("Clean up Cyanide's memory junk.")]
+        public async Task RemoteCleanupAsync()
+        {
+            await ReplyAsync("Cleaning up...");
+            GC.Collect();
         }
     }
 }

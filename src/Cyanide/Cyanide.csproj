@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Modules\SauceNAO\SauceNaoSharp.dll" />
     <None Remove="Modules\Translator\input.txt" />
     <None Remove="Modules\Translator\rawText.txt" />
   </ItemGroup>
@@ -63,6 +64,13 @@
     <None Update="Config\Configuration.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\Memes\honest.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\Memes\" />
   </ItemGroup>
 
 </Project>

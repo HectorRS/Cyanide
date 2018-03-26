@@ -31,9 +31,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Databases\TimezoneDatabase.cs.hold" />
-    <None Remove="Entities\GuildTimezone.cs.hold" />
-    <None Remove="Managers\TimezoneManager.cs.hold" />
+    <None Remove="Databases\Db\TimezoneDatabase.cs.hold" />
+    <None Remove="Databases\Entities\GuildTimezone.cs.hold" />
+    <None Remove="Databases\Managers\TimezoneManager.cs.hold" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +43,14 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.0-preview1-final" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.0-preview1-final" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0002" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0002" />
+    <PackageReference Include="System.Drawing.Common" Version="4.5.0-preview1-26216-02" />
+    <PackageReference Include="System.Drawing.Primitives" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
 
 </Project>

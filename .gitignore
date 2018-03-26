@@ -9,6 +9,8 @@
 [Cc]onfiguration.json
 *.dgml
 *.hold
+*.pubxml
+SauceNaoSharp.dll
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

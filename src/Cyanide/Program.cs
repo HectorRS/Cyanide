@@ -42,6 +42,7 @@ namespace Cyanide
                 .AddSingleton<StartupService>()
                 .AddSingleton<CommandHandler>()
                 .AddSingleton<EventHandler>()
+                .AddSingleton<MemeBuilderService>()
                 .AddSingleton<Random>()
                 .AddSingleton(cyanConfig);
 
