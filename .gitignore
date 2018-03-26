@@ -7,6 +7,9 @@
 *.userosscache
 *.sln.docstates
 Configuration.json
+SauceNaoSharp.dll
+*.hold
+*.pubxml
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
