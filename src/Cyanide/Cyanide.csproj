@@ -46,12 +46,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="SauceNaoSharp">
-      <HintPath>Modules\dll\SauceNaoSharp.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="Configuration.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -71,6 +65,12 @@
 
   <ItemGroup>
     <Folder Include="Resources\Memes\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="SauceNaoSharp">
+      <HintPath>Modules\SauceNAO\SauceNaoSharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
