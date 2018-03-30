@@ -58,6 +58,9 @@
     <None Update="Config\Configuration.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\Memes\aslongas.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Memes\honest.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
