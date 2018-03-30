@@ -91,7 +91,7 @@ namespace Cyanide.Modules
             {
                 await ReplyAsync(
                     "Internal Error.\n" + "```prolog\n" +
-                    "SauceNAO URL: ['http://saucenao.com/search.php?db=999&url=" + url + "']\n```");
+                    "Try going directly to SauceNAO: ['http://saucenao.com/search.php?db=999&url=" + url + "']\n```");
             }
         }
     }
