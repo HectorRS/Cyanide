@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace Cyanide.Modules
 {
@@ -9,10 +10,13 @@ namespace Cyanide.Modules
     public class CyanGuildConifg : CyanModuleBase
     {
         private readonly ConfigManager cyanManager;
+        private readonly IConfigurationRoot cyanConfig;
 
-        public CyanGuildConifg(ConfigManager manager)
+        public CyanGuildConifg(ConfigManager manager,
+                               IConfigurationRoot config)
         {
             cyanManager = manager;
+            cyanConfig = config;
         }
 
         [Command("prefix")]
@@ -22,9 +26,9 @@ namespace Cyanide.Modules
             var config = await cyanManager.GetOrCreateConfigAsync(Context.Guild.Id);
 
             if (config.Prefix == null)
-                await ReplyAsync($"This server's prefix is {Context.Client.CurrentUser.Mention}");
+                await ReplyEmbedAsync(3, "Prefix Configurator", $"Server's current prefix: `{cyanConfig["globalprefix"]}`");
             else
-                await ReplyAsync($"This server's prefix is `{config.Prefix}`");
+                await ReplyEmbedAsync(3, "Prefix Configurator", $"Server's current prefix: `{config.Prefix}`");
         }
 
         [Command("setprefix")]
@@ -35,31 +39,31 @@ namespace Cyanide.Modules
             var config = await cyanManager.GetOrCreateConfigAsync(Context.Guild.Id);
             await cyanManager.SetPrefixAsync(config, prefix);
 
-            await ReplyAsync($"This server's prefix is now `{prefix}`");
+            await ReplyEmbedAsync(3, "Prefix Configurator", $"Server's prefix has been set to `{prefix}`");
         }
 
-        [Command("userlogchannel")]
-        [Summary("Check what user logging channel this server has configured.")]
+        [Command("gatelog")]
+        [Summary("Check what gatelog channel this server has configured.")]
         [RequireUserPermission(GuildPermission.ManageChannels)]
-        public async Task UserIOLogChannelIdAsync()
+        public async Task GatelogAsync()
         {
             var config = await cyanManager.GetOrCreateConfigAsync(Context.Guild.Id);
 
             if (config.UserIOLogChannelId == 0)
-                await ReplyAsync($"This server has not set the channel to log in.");
+                await ReplyEmbedAsync(3, "Gatelog Configurator", "Server has not set the channel to log.");
             else
-                await ReplyAsync($"This server's log channel ID is `{config.UserIOLogChannelId}`");
+                await ReplyEmbedAsync(3, "Gatelog Configurator", $"Server's current gatelog channel ID: `{config.UserIOLogChannelId}`");
         }
 
-        [Command("setuserlogchannel")]
-        [Summary("Change this server's log channel ID. Set value to 0 to disable logging.")]
+        [Command("setgatelog")]
+        [Summary("Change this server's gatelog channel ID. Set value to 0 to disable logging.")]
         [RequireUserPermission(GuildPermission.Administrator)]
-        public async Task SetUserIOLogChannelIdAsync([Remainder]ulong userIOLogChannelId)
+        public async Task SetGatelogAsync([Remainder]ulong userIOLogChannelId)
         {
             var config = await cyanManager.GetOrCreateConfigAsync(Context.Guild.Id);
             await cyanManager.SetUserIOChannelIdAsync(config, userIOLogChannelId);
 
-            await ReplyAsync($"This server's log channel ID is now `{userIOLogChannelId}`");
+            await ReplyEmbedAsync(3, "Gatelog Configurator", $"Server's gatelog channel ID has been changed to `{userIOLogChannelId}`");
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IO;
+using System.Net;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using System.Linq;
 using Discord;
 using Discord.Commands;
 using SauceNaoSharp;
@@ -17,6 +19,20 @@ namespace Cyanide.Modules
         public CyanSauceNAO(IConfigurationRoot config)
         {
             cyanConfig = config;
+        }
+
+        private bool IsOversized(string url)
+        {
+            WebClient client = new WebClient();
+            MemoryStream ms = new MemoryStream(client.DownloadData(url));
+
+            long size = ms.Length;
+
+            client.Dispose();
+            ms.Dispose();
+
+            if (size >= 15728640) return true;
+            else return false;
         }
 
         [Command("saucenao")]
@@ -47,7 +63,13 @@ namespace Cyanide.Modules
 
             if (url == null)
             {
-                await ReplyAsync("No link found. (null result)");
+                await ReplyEmbedAsync(2, "Error: No images/attachments found", "Try reposting the image.");
+                return;
+            }
+
+            if (IsOversized(url))
+            {
+                await ReplyEmbedAsync(2, "Error: Oversized image", "Image cannot be 15MB or higher.");
                 return;
             }
 
@@ -66,32 +88,32 @@ namespace Cyanide.Modules
 
                 foreach (var results in response.Results)
                 {
-                    if (double.Parse(results.ResultInfo.Similarity) >= 50.00)
+                    if (double.Parse(results.ResultInfo.Similarity) >= 65.00)
                     {
                         if (!string.IsNullOrWhiteSpace(results.ResultData.PixivId.ToString())
                             && !string.IsNullOrWhiteSpace(results.ResultData.PixivMemberName))
                         {
-                            await ReplyAsync(
-                            "Result found:\n" +
-                            "Pixiv: \"" + results.ResultData.Title + "\", by: " + results.ResultData.PixivMemberName + "\n" +
+                            await ReplyEmbedAsync(1,
+                            "Result found:",
+                            "Pixiv: \"" + results.ResultData.Title + "\"\n" +
+                            "Artist: " + results.ResultData.PixivMemberName + "\n" +
                             results.ResultData.Urls[0]);
                         }
-                        else await ReplyAsync(
-                            "Result found:\n" + "```prolog\n" +
-                            "Similarity: '" + results.ResultInfo.Similarity + "%'\n" +
-                            "Title: '" + results.ResultData.Title + "'\n" +
-                            "Creator: '" + results.ResultData.ImageCreator + "'\n" +
-                            "Source: '" + results.ResultData.ImageSource + "'\n" +
-                            "Url: ['" + results.ResultData.Urls[0] + "']\n```");
+                        else await ReplyEmbedAsync(1, 
+                            "Result found:",
+                            "```prolog\n"   +
+                            "Similarity: '" + results.ResultInfo.Similarity     + "%'\n" +
+                            "Title: '"      + results.ResultData.Title          + "'\n" +
+                            "Creator: '"    + results.ResultData.ImageCreator   + "'\n" +
+                            "Source: '"     + results.ResultData.ImageSource    + "'\n" +
+                            "Url: ['"       + results.ResultData.Urls[0]        + "']\n```");
                     }
-                    else await ReplyAsync("No link found. (similarity < 50)");
+                    else await ReplyEmbedAsync(2, "Error: Similarity too low", "No results found.");
                 }
             }
             catch
             {
-                await ReplyAsync(
-                    "Internal Error.\n" + "```prolog\n" +
-                    "Try going directly to SauceNAO: ['http://saucenao.com/search.php?db=999&url=" + url + "']\n```");
+                await ReplyEmbedAsync(2, "Error: Unhandled Exception", "Try going directly to SauceNAO:\n" + "http://saucenao.com/search.php?db=999&url=" + url);
             }
         }
     }

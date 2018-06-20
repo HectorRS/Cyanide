@@ -36,21 +36,26 @@ namespace Cyanide
         private async Task OnMessageReceivedAsync(SocketMessage MsgParam)
         {
             var msg = MsgParam as SocketUserMessage;
-            if (msg == null)
-                return;
-
+            if (msg == null) return;
             var context = new CyanCommandContext(cyanClient, msg);
-            string prefix = await cyanManager.GetPrefixAsync(context.Guild.Id);
 
             int argPos = 0;
+            string prefix = cyanConfig["globalprefix"];
+            
+            if (context.Guild != null)
+            {
+                prefix = await cyanManager.GetPrefixAsync(context.Guild.Id);
+            }
+
             bool hasStringPrefix = prefix == null ? false : msg.HasStringPrefix(prefix, ref argPos);
 
-            if  (hasStringPrefix || msg.HasStringPrefix(cyanConfig["globalprefix"], ref argPos))
+            if (hasStringPrefix || msg.HasStringPrefix(cyanConfig["globalprefix"], ref argPos))
             {
                 var ts = context.Channel.EnterTypingState();
                 await ExecuteAsync(context, cyanProvider, argPos);
                 ts.Dispose();
-            } 
+                GC.Collect();
+            }
         }
 
         public async Task ExecuteAsync(CyanCommandContext context, IServiceProvider provider, int argPos)

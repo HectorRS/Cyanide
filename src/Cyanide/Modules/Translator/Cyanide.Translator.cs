@@ -14,11 +14,12 @@ namespace Cyanide.Modules
     [Summary("Translates messages.")]
     public class CyanTranslate : CyanModuleBase
     {
-        string langDir = Directory.GetCurrentDirectory() + @"\Modules\Translator\lang.json";
-        string rawDir  = Directory.GetCurrentDirectory() + @"\Modules\Translator\rawText.txt";
-        string apiLinkPrefix = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=";
-        string disclaimer = "Dev note: If the result isn't what you expected, try specifying source language manually." + "\n"
+        readonly string langDir = Directory.GetCurrentDirectory() + @"\Modules\Translator\lang.json";
+        readonly string rawDir  = Directory.GetCurrentDirectory() + @"\Modules\Translator\rawText.txt";
+        readonly string apiLinkPrefix = "https://translate.googleapis.com/translate_a/single?client=gtx&sl=";
+        readonly string disclaimer = "Dev note: If the result isn't what you expected, try specifying source language manually." + "\n"
                           + "Known bug(s): translating non-Latin-based texts is buggy due to unresolved parsing issues.";
+
         string sourceLangISO;
         string targetLangISO;
         string rawJsonText;
@@ -61,11 +62,16 @@ namespace Cyanide.Modules
             //Refers to RegexFilter function, which filters the content of the texts
             resultText = RegexFilter(rawJsonText);
 
+            //Builds the embed for result
+            var builder = new EmbedBuilder()
+                .WithColor(0, 255, 255)
+                .AddField("Original text:", sourceText)
+                .AddField("Target language:", targetLangText)
+                .AddField("Translated text:", resultText)
+                .WithFooter(disclaimer);
+
             //Returns the result to Discord
-            await ReplyAsync( "Original text: "   + sourceText     + "\n"
-                            + "Target Language: " + targetLangText + "\n"
-                            + "Translated text: " + resultText     + "\n"
-                            + disclaimer                                );
+            await ReplyAsync(builder);
 
             //Deletes the downloaded file
             File.Delete(rawDir);
@@ -96,13 +102,16 @@ namespace Cyanide.Modules
 
             resultText = RegexFilter(rawJsonText);
 
-            await ReplyAsync( "Original text: "   + sourceText     + "\n"
-                            + "Source Language: " + sourceLangText + "\n"
-                            + "Target Language: " + targetLangText + "\n"
-                            + "Translated text: " + resultText          );
+            var builder = new EmbedBuilder()
+                .WithColor(0, 255, 255)
+                .AddField("Original text:", sourceText)
+                .AddField("Source language:", sourceLangText)
+                .AddField("Target language:", targetLangText)
+                .AddField("Translated text:", resultText)
+                .WithFooter(disclaimer);
             
-            //File.Delete(rawDir);
-
+            await ReplyAsync(builder);
+            
             typingState.Dispose();
         }
 
@@ -117,7 +126,7 @@ namespace Cyanide.Modules
             string sourceText = "";
             foreach (var content in messages)
             {
-                if (content.Content.Equals("Cyan englishpls", StringComparison.OrdinalIgnoreCase))
+                if (content.Content.Equals("Cyan translate", StringComparison.OrdinalIgnoreCase))
                     continue;
 
                 sourceText = content.Content;

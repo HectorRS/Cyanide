@@ -31,13 +31,18 @@ namespace Cyanide
         {
             ulong channelId = await cyanConfigManager.GetUserIOChannelIdAsync(user.Guild.Id);
             var channel = cyanClient.GetChannel(channelId) as SocketTextChannel;
-            var builder = new EmbedBuilder()
+            var embed = new EmbedBuilder()
                 .WithColor(0, 255, 255)
+                .WithAuthor(x =>
+                {
+                    x.Name = user.Username;
+                    x.IconUrl = user.GetAvatarUrl();
+                })
                 .WithDescription($"User **{user.Username}#{user.Discriminator}** has joined the server.");
 
             if (channelId != 0 || channel != null)
             {
-                await channel.SendMessageAsync("", false, builder);
+                await channel.SendMessageAsync("", false, embed);
             }
             else return;
         }
@@ -46,13 +51,18 @@ namespace Cyanide
         {
             ulong channelId = await cyanConfigManager.GetUserIOChannelIdAsync(user.Guild.Id);
             var channel = cyanClient.GetChannel(channelId) as SocketTextChannel;
-            var builder = new EmbedBuilder()
+            var embed = new EmbedBuilder()
                 .WithColor(0, 255, 255)
+                .WithAuthor(x =>
+                {
+                    x.Name = user.Username;
+                    x.IconUrl = user.GetAvatarUrl();
+                })
                 .WithDescription($"User **{user.Username}#{user.Discriminator}** has left the server.");
 
             if (channelId != 0 || channel != null)
             {
-                await channel.SendMessageAsync("", false, builder);
+                await channel.SendMessageAsync("", false, embed);
             }
             else return;
         }

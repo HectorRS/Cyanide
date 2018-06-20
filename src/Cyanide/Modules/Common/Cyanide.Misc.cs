@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace Cyanide.Modules
 {
-    [Name("User Interaction")]
-    [Summary("Various commands to interact with users.")]
-    public class CyanUserInteraction : CyanModuleBase
+    [Name("Miscellaneous")]
+    [Summary("Random, practically useless commands.")]
+    public class CyanMisc : CyanModuleBase
     {
         [Command("echo")]
         [Summary("Echoes a message.")]

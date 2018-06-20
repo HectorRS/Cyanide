@@ -1,7 +1,9 @@
 ﻿{
-    "prefix": "Cyan ",
+  "globalprefix": "Cyan ",
+  "game": "Cyan is the new Black.",
   "tokens": {
     "discord": null,
+    "discord-test": null,
     "SauceNAO": null
   }
 }

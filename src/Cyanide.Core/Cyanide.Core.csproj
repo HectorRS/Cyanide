@@ -6,7 +6,7 @@
     <ApplicationIcon />
     <StartupObject />
     <RootNamespace>Cyanide</RootNamespace>
-    <Version>0.9.3</Version>
+    <Version>0.9.5</Version>
     <PackageId>CNDCORE</PackageId>
     <Authors>HectorRS; Lemonical</Authors>
     <Company>MX45</Company>
@@ -25,6 +25,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Resources\**" />
+    <EmbeddedResource Remove="Resources\**" />
+    <None Remove="Resources\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="Common\Configuration.cs" />
@@ -47,10 +53,6 @@
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0003" />
     <PackageReference Include="System.Drawing.Common" Version="4.5.0-preview1-26216-02" />
     <PackageReference Include="System.Drawing.Primitives" Version="4.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Resources\" />
   </ItemGroup>
 
 </Project>

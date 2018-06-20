@@ -22,9 +22,16 @@ namespace Cyanide
             cyanCommands = commands;
         }
 
+        //Test mode switch for devs only
+        internal bool testMode = false;
+
         public async Task StartAsync()
         {
-            await cyanClient.LoginAsync(TokenType.Bot, cyanConfig["tokens:discord"]);
+            if (testMode)
+                await cyanClient.LoginAsync(TokenType.Bot, cyanConfig["tokens:discord-test"]);
+            else
+                await cyanClient.LoginAsync(TokenType.Bot, cyanConfig["tokens:discord"]);
+
             await cyanClient.StartAsync();
 
             await cyanCommands.AddModulesAsync(Assembly.GetEntryAssembly());

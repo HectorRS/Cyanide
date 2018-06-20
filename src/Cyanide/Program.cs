@@ -19,7 +19,7 @@ namespace Cyanide
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine($"Cyanide v.{AppHelper.Version}");
-
+                
             var cyanBuilder = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory + @"/Config")
                 .AddJsonFile("Configuration.json");

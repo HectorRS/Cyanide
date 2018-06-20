@@ -18,7 +18,7 @@ namespace Cyanide.Modules
         private readonly IServiceProvider cyanProvider;
         private readonly IConfigurationRoot cyanConfig;
 
-        public CyanHelp(    CommandService commands      ,
+        public CyanHelp(    CommandService commands     ,
                             ConfigManager manager       ,
                             IServiceProvider provider   ,
                             IConfigurationRoot config   )
@@ -30,21 +30,43 @@ namespace Cyanide.Modules
         }
 
         private async Task<string> GetPrefixAsync()
-            => (await cyanManager.GetPrefixAsync(Context.Guild.Id))
-            ?? $"{cyanConfig["globalprefix"]}";
+        {
+            if (Context.Guild != null) return await cyanManager.GetPrefixAsync(Context.Guild.Id);
+            else return $"{cyanConfig["globalprefix"]}";
+        }
         
         [Command]
         public async Task HelpAsync()
         {
             string prefix = await GetPrefixAsync();
+            bool isDM = (Context.Guild != null) ? false : true;
             var modules = cyanCommands.Modules.Where(x => !string.IsNullOrWhiteSpace(x.Summary));
+            var cyanide = await Context.Client.GetApplicationInfoAsync();
+            
+            var embed = new EmbedBuilder()
+                .WithColor(0, 255, 255)
+                .WithAuthor(x =>
+                {
+                    x.Name = cyanide.Name;
+                    x.IconUrl = cyanide.IconUrl;
+                });
+                
+            if (isDM)
+            {
+                embed.WithDescription($"Global Prefix: `{prefix}`\n\n" +
+                                      $"List of available commands:")
+                     .WithFooter(x => x.Text = $"Type `{prefix} help <module>` for more information.");
+            }
+            else
+            {
+                prefix = await GetPrefixAsync();
 
-            var builder = new EmbedBuilder()
-                .WithDescription($"Global Prefix: `{cyanConfig["globalprefix"]}`\n"
-                                +$"Local Prefix: `{prefix}`")
-                .WithFooter(x => x.Text = $"Type `{prefix} help <module>` for more information.")
-                .WithColor(0, 255, 255);
-
+                embed.WithDescription($"Global Prefix: `{cyanConfig["globalprefix"]}`\n" +
+                                      $"Local Prefix: `{prefix}`\n\n" +
+                                      $"List of available commands:")
+                     .WithFooter(x => x.Text = $"Type `{prefix} help <module>` for more information.");
+            }
+            
             foreach (var module in modules)
             {
                 bool success = false;
@@ -61,21 +83,24 @@ namespace Cyanide.Modules
                 if (!success)
                     continue;
 
-                builder.AddField(module.Name, module.Summary);
+                embed.AddField(module.Name, module.Summary);
             }
 
-            await ReplyDMAsync(builder);
+            embed.Build();
+            await ReplyAsync(embed, true);
         }
 
         [Command]
         public async Task HelpAsync(string moduleName)
         {
             string prefix = await GetPrefixAsync();
+
             var module = cyanCommands.Modules.FirstOrDefault(x => x.Name.ToLower() == moduleName.ToLower());
+            var cyanide = await Context.Client.GetApplicationInfoAsync();
 
             if (module == null)
             {
-                await ReplyAsync($"The module `{moduleName}` does not exist.");
+                await ReplyEmbedAsync(2, "Error", $"The module `{moduleName}` does not exist.");
                 return;
             }
 
@@ -85,22 +110,29 @@ namespace Cyanide.Modules
 
             if (commands.Count() == 0)
             {
-                await ReplyAsync($"The module `{module.Name}` has no available commands :(");
+                await ReplyEmbedAsync(2, "Error", $"The module `{module.Name}` has no available commands.");
                 return;
             }
 
-            var builder = new EmbedBuilder()
-                .WithFooter(x => x.Text = $"Type `{prefix}help <module> <command>` for more information")
+            var embed = new EmbedBuilder()
+                .WithAuthor(x =>
+                {
+                    x.Name = cyanide.Name;
+                    x.IconUrl = cyanide.IconUrl;
+                })
+                .WithTitle(moduleName)
+                .WithFooter(x => x.Text = $"Type `{prefix}help <module> <command>` for more information.")
                 .WithColor(0, 255, 255);
 
             foreach (var command in commands)
             {
                 var result = await command.CheckPreconditionsAsync(Context, cyanProvider);
                 if (result.IsSuccess)
-                    builder.AddField(prefix + command.Aliases.First(), command.Summary);
+                    embed.AddField(prefix + command.Aliases.First(), command.Summary);
             }
 
-            await ReplyAsync(builder);
+            embed.Build();
+            await ReplyAsync(embed, true);
         }
 
         [Command]
@@ -108,11 +140,13 @@ namespace Cyanide.Modules
         {
             string alias = $"{moduleName} {commandName}".ToLower();
             string prefix = await GetPrefixAsync();
+
             var module = cyanCommands.Modules.FirstOrDefault(x => x.Name.ToLower() == moduleName.ToLower());
+            var cyanide = await Context.Client.GetApplicationInfoAsync();
 
             if (module == null)
             {
-                await ReplyAsync($"The module `{moduleName}` does not exist.");
+                await ReplyEmbedAsync(2, "Error", $"The module `{moduleName}` does not exist.");
                 return;
             }
 
@@ -120,12 +154,17 @@ namespace Cyanide.Modules
 
             if (commands.Count() == 0)
             {
-                await ReplyAsync($"The module `{module.Name}` has no available commands :(");
+                await ReplyEmbedAsync(2, "Error", $"The module `{module.Name}` has no available commands.");
                 return;
             }
 
             var command = commands.Where(x => x.Aliases.Contains(alias));
-            var builder = new EmbedBuilder()
+            var embed = new EmbedBuilder()
+                .WithAuthor(x =>
+                {
+                    x.Name = cyanide.Name;
+                    x.IconUrl = cyanide.IconUrl;
+                })
                 .WithColor(0, 255, 255);
 
             var aliases = new List<string>();
@@ -134,7 +173,7 @@ namespace Cyanide.Modules
                 var result = await overload.CheckPreconditionsAsync(Context, cyanProvider);
                 if (result.IsSuccess)
                 {
-                    var sbuilder = new StringBuilder()
+                    var strBuilder = new StringBuilder()
                         .Append(prefix + overload.Aliases.First());
 
                     foreach (var parameter in overload.Parameters)
@@ -148,17 +187,18 @@ namespace Cyanide.Modules
                         else
                             p = $"<{p}>";
 
-                        sbuilder.Append(" " + p);
+                        strBuilder.Append(" " + p);
                     }
 
-                    builder.AddField(sbuilder.ToString(), overload.Remarks ?? overload.Summary);
+                    embed.AddField(strBuilder.ToString(), overload.Remarks ?? overload.Summary);
                 }
                 aliases.AddRange(overload.Aliases);
             }
 
-            builder.WithFooter(x => x.Text = $"Aliases: {string.Join(", ", aliases)}");
+            embed.WithFooter(x => x.Text = $"Aliases: {string.Join(", ", aliases)}");
 
-            await ReplyAsync(builder);
+            embed.Build();
+            await ReplyAsync(embed, true);
         }
     }
 }

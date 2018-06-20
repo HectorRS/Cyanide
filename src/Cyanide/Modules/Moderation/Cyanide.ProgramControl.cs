@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Cyanide.Modules
 {
     [Name("Program Control"), Group("prog")]
-    [Summary("Tasks for controlling host machine.")]
+    [Summary("Tasks for controlling the host machine.")]
     [RequireOwner]
     public class CyanProgramControlAsync : CyanModuleBase
     {
@@ -43,14 +43,6 @@ namespace Cyanide.Modules
             await Context.Client.StopAsync();
             await Context.Client.LogoutAsync();
             Environment.Exit(0);
-        }
-
-        [Command("cleanup"), Alias("clean")]
-        [Summary("Clean up Cyanide's memory junk.")]
-        public async Task RemoteCleanupAsync()
-        {
-            await ReplyAsync("Cleaning up...");
-            GC.Collect();
         }
     }
 }
