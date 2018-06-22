@@ -17,5 +17,12 @@ namespace Cyanide.Modules
 
             await ReplyAsync(echo);
         }
+
+        [Command("github")]
+        [Summary("Replies with the link to Cyanide's Github.")]
+        public async Task GithubAsync()
+        {
+            await ReplyEmbedAsync(0, null, "https://github.com/HectorRS/Cyanide", "https://github.com/HectorRS/Cyanide");
+        }
     }
 }
